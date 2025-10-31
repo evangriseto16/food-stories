@@ -28,6 +28,7 @@
 </script>
 
 <!-- Workshop Bullet Point Highlighting -->
+{% if page.url contains '/guides/' or page.workshop_mode %}
 <script type="text/javascript">
   document.addEventListener('DOMContentLoaded', function() {
     let workshopMode = false;
@@ -35,6 +36,43 @@
     let bulletPoints = [];
     let controlsDiv = null;
     let controlsTimeout = null;
+
+
+    // Sync with navbar toggle
+    const navToggle = document.getElementById('workshopModeToggle');
+    if (navToggle) {
+      navToggle.addEventListener('change', function() {
+        workshopMode = this.checked;
+        
+        if (!workshopMode) {
+          bulletPoints.forEach(li => li.classList.remove('highlighted'));
+          currentHighlight = -1;
+        }
+        
+        updateControls();
+        
+        // Remove focus from toggle so keyboard shortcuts work
+        this.blur();
+      });
+    }
+
+    // Update toggle when 'w' key is pressed
+    function toggleWorkshopMode() {
+      workshopMode = !workshopMode;
+      
+      // Sync navbar toggle if it exists
+      if (navToggle) {
+        navToggle.checked = workshopMode;
+      }
+      
+      if (!workshopMode) {
+        bulletPoints.forEach(li => li.classList.remove('highlighted'));
+        currentHighlight = -1;
+      }
+      
+      updateControls();
+    }
+
 
     // Initialize bullet points array
     function initializeBulletPoints() {
@@ -76,23 +114,33 @@
           <div>Current: ${currentHighlight + 1}/${bulletPoints.length}</div>
         `;
         
-        // Show controls temporarily
-        controlsDiv.classList.remove('fade-out');
-        controlsDiv.classList.add('visible');
-        
-        // Clear existing timeout
-        if (controlsTimeout) {
-          clearTimeout(controlsTimeout);
+        // Only show controls when workshop mode is ON
+        if (workshopMode) {
+          // Show controls temporarily
+          controlsDiv.classList.remove('fade-out');
+          controlsDiv.classList.add('visible');
+          
+          // Clear existing timeout
+          if (controlsTimeout) {
+            clearTimeout(controlsTimeout);
+          }
+          
+          // Fade out after 3 seconds
+          controlsTimeout = setTimeout(() => {
+            controlsDiv.classList.add('fade-out');
+            setTimeout(() => {
+              controlsDiv.classList.remove('visible');
+              controlsDiv.classList.remove('fade-out');
+            }, 300);
+          }, 3000);
+        } else {
+          // Hide controls immediately when workshop mode is OFF
+          controlsDiv.classList.remove('visible');
+          controlsDiv.classList.remove('fade-out');
+          if (controlsTimeout) {
+            clearTimeout(controlsTimeout);
+          }
         }
-        
-        // Fade out after 3 seconds
-        controlsTimeout = setTimeout(() => {
-          controlsDiv.classList.add('fade-out');
-          setTimeout(() => {
-            controlsDiv.classList.remove('visible');
-            controlsDiv.classList.remove('fade-out');
-          }, 300);
-        }, 3000);
       }
     }
 
@@ -113,6 +161,7 @@
 
     // Move to next bullet point
     function nextBullet() {
+      if (!workshopMode) return;
       if (currentHighlight < bulletPoints.length - 1) {
         currentHighlight++;
         highlightBullet(currentHighlight);
@@ -122,6 +171,7 @@
 
     // Move to previous bullet point
     function prevBullet() {
+      if (!workshopMode) return;
       if (currentHighlight > 0) {
         currentHighlight--;
         highlightBullet(currentHighlight);
@@ -132,6 +182,11 @@
     // Toggle workshop mode
     function toggleWorkshopMode() {
       workshopMode = !workshopMode;
+      
+      // Sync navbar toggle if it exists
+      if (navToggle) {
+        navToggle.checked = workshopMode;
+      }
       
       if (!workshopMode) {
         // Clear all highlights
@@ -144,11 +199,12 @@
 
     // Keyboard event handler
     function handleKeyboard(event) {
-      // Don't interfere with form inputs, contenteditable, or when modifier keys are pressed
+      // Don't interfere with form inputs, contenteditable, toggle switch, or when modifier keys are pressed
       const activeElement = document.activeElement;
       if (activeElement.tagName === 'INPUT' || 
           activeElement.tagName === 'TEXTAREA' || 
           activeElement.contentEditable === 'true' ||
+          activeElement.id === 'workshopModeToggle' ||
           event.ctrlKey || event.metaKey || event.altKey) {
         return;
       }
@@ -202,7 +258,7 @@
     // Add keyboard event listener
     document.addEventListener('keydown', handleKeyboard);
     
-    // Show initial controls
-    updateControls();
+    // Controls will show when workshop mode is enabled via toggle or 'w' key
   });
 </script>
+{% endif %}

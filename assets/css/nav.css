@@ -133,6 +133,36 @@ BREADCRUMB NAVIGATION
 } /* end media screen */
 
 
+.navbar-workshop-toggle {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  padding: 0 1rem;
+}
+
+.navbar-workshop-toggle .form-switch {
+  margin: 0;
+}
+
+.navbar-workshop-toggle .form-check-input {
+  cursor: pointer;
+}
+
+.navbar-workshop-toggle .form-check-label {
+  cursor: pointer;
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--bs-navbar-color);
+}
+
+/* Adjust for mobile */
+@media (max-width: 768px) {
+  .navbar-workshop-toggle {
+    padding: 0.5rem 1rem;
+    border-top: 1px solid rgba(0,0,0,.1);
+  }
+}
+
 
 /*****************************************************************************/
 /*

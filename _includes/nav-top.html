@@ -27,8 +27,18 @@
               <a class="nav-link" href="{{site.baseurl}}{{ item.url }}">{{ item.title }}</a>
             </li>
           {% endif %}
-        {% endfor %}
+        {% endfor %}        
       </ul>
+          <!-- Workshop Mode Toggle (only visible on guide pages) -->
+          {% if page.url contains '/guides/' or page.workshop_mode %}
+          <div class="navbar-workshop-toggle me-3">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="workshopModeToggle" role="switch">
+              <label class="form-check-label" for="workshopModeToggle">Workshop Mode</label>
+            </div>
+          </div>
+          {% endif %}
+
       <form class="d-flex" role="search">
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
